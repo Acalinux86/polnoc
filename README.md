@@ -5,7 +5,8 @@ The Language Supports basic arithmetic operation: Division, Multiplication, Addi
 ## Usage
 ``` bash
 $ make
-$ ./build/polnoc ./test/1-test.txt
+$ ./build/polnoc -i ./test/1-test.txt # Pass input file
+$ ./build/polnoc -s                   # Interactive Mode
 ```
 
 ### Acknowledgement

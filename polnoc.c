@@ -332,10 +332,10 @@ bool rpni_tokenize_raw_list(const RPNI_Lexer *l, const RPNI_RawList *list, RPNI_
             token.row = string->row;
             token.col = string->col;
             rpni_array_push(tokens, token);
-        } else {
-            fprintf(stderr, "%s:%d:%d:ERROR Unrecognized Token: %s\n", l->content_path, string->row, string->col, string->c_str);
-            return false;
-        }
+        }//  else {
+        //     fprintf(stderr, "%s:%d:%d:ERROR Unrecognized Token: %s\n", l->content_path, string->row, string->col, string->c_str);
+        //     return false;
+        // }
     }
 
     return true;
@@ -357,7 +357,7 @@ bool rpni_eval_exprs(const RPNI_Lexer *l, const RPNI_Tokens *tokens, RPNI_Stack 
             if (strcmp(token.data.string, "print") == 0) {
                 if (!rpni_dump_tokens((RPNI_Tokens*)stack)) return false;
             } else {
-                fprintf(stderr, "%s:%d:%d:ERROR Unrecognized Token `%s`\n", l->content_path, token.row, token.col, token.data.string);
+                fprintf(stderr, "%s:%d:%d:ERROR Unrecognized Token (FUNC) `%s`\n", l->content_path, token.row, token.col, token.data.string);
                 return false;
             }
         } break;

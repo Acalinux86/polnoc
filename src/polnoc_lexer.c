@@ -35,9 +35,6 @@ char plc_lexer_peek(const Plc_Lexer *lexer)
     return lexer->content[lexer->cursor];
 }
 
-// Compare strings
-#define plc_cmp(str, str_lit) (strcmp((str)->contents, str_lit) == 0)
-
 char plc_lexer_advance(Plc_Lexer *lexer)
 {
     return lexer->content[lexer->cursor++];
@@ -68,14 +65,8 @@ bool plc_lexer_tokenize(Plc_Lexer *l, Plc_Tokens *tokens)
             }
             dyn_array_append(&token.data.string, '\0');
 
-            if (plc_cmp(&token.data.string, "print")) {
-                token.type = PLC_TOKEN_FUNC;
-                dyn_array_append(tokens, token);
-            } else {
-                fprintf(stderr, "ERROR: Unknown Token: `%s`\n", token.data.string.contents);
-                dyn_array_delete(&token.data.string);
-                return false;
-            }
+            token.type = PLC_TOKEN_FUNC;
+            dyn_array_append(tokens, token);
         } else if (isspace(c)) {
             plc_lexer_advance(l);
             dyn_array_delete(&token.data.string);

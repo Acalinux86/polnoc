@@ -9,7 +9,7 @@ CFLAGS=			\
 
 LIBS= -lm
 
-build/polnoc: src/polnoc.c src/polnoc_lexer.c
+build/polnoc: src/polnoc.c src/polnoc_lexer.c src/polnoc_lexer.c
 	mkdir -p build
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 

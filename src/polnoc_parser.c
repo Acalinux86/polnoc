@@ -33,6 +33,9 @@ Plc_Token plc_parser_pop_token(Plc_Tokens *stack)
     return stack->contents[--stack->count];
 }
 
+// Compare strings
+#define plc_cmp(str, str_lit) (strcmp((str)->contents, str_lit) == 0)
+
 bool plc_parse_tokens(const Plc_Tokens *tokens, Plc_Tokens *stack)
 {
     memset(stack, 0, sizeof(*stack));
@@ -66,7 +69,10 @@ bool plc_parse_tokens(const Plc_Tokens *tokens, Plc_Tokens *stack)
         case PLC_TOKEN_DIV: {
             double right = plc_parser_pop_token(stack).data.number;
             double left  = plc_parser_pop_token(stack).data.number;
-            assert(right != 0 && "ERROR: Division by Zero");
+            if (right == 0.000000) {
+                fprintf(stderr, "ERROR: Division by `%lf`", right);
+                return false;
+            }
 
             Plc_Token t = {0};
             t.data.number = left / right;
@@ -85,8 +91,13 @@ bool plc_parse_tokens(const Plc_Tokens *tokens, Plc_Tokens *stack)
         } break;
 
         case PLC_TOKEN_FUNC: {
-            Plc_Token *top = &stack->contents[0];
-            fprintf(stdout, "INFO: Value: %lf, Type: %s\n", top->data.number, plc_token_type_as_cstr(top->type));
+            if (plc_cmp(&token->data.string, "print")) {
+                Plc_Token *top = &stack->contents[0];
+                fprintf(stdout, "INFO: Value: %lf, Type: %s\n", top->data.number, plc_token_type_as_cstr(top->type));
+            } else {
+                fprintf(stdout, "ERROR: Unknown token `%s`\n", token->data.string.contents);
+                continue;
+            }
         } break;
 
         default:

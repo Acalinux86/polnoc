@@ -50,9 +50,9 @@ bool plc_parse_tokens(const Plc_Tokens *tokens, Plc_Tokens *stack)
             double right = plc_parser_pop_token(stack).data.number;
             double left  = plc_parser_pop_token(stack).data.number;
 
-            Plc_Token t = {0};
+            Plc_Token t   = {0};
+            t.type        = PLC_TOKEN_NUMBER;
             t.data.number = left + right;
-            t.type = PLC_TOKEN_NUMBER;
             dyn_array_append(stack, t);
         } break;
 
@@ -60,9 +60,9 @@ bool plc_parse_tokens(const Plc_Tokens *tokens, Plc_Tokens *stack)
             double right = plc_parser_pop_token(stack).data.number;
             double left  = plc_parser_pop_token(stack).data.number;
 
-            Plc_Token t = {0};
+            Plc_Token t   = {0};
+            t.type        = PLC_TOKEN_NUMBER;
             t.data.number = left - right;
-            t.type = PLC_TOKEN_NUMBER;
             dyn_array_append(stack, t);
         } break;
 
@@ -74,9 +74,9 @@ bool plc_parse_tokens(const Plc_Tokens *tokens, Plc_Tokens *stack)
                 return false;
             }
 
-            Plc_Token t = {0};
+            Plc_Token t   = {0};
+            t.type        = PLC_TOKEN_NUMBER;
             t.data.number = left / right;
-            t.type = PLC_TOKEN_NUMBER;
             dyn_array_append(stack, t);
         } break;
 
@@ -84,16 +84,19 @@ bool plc_parse_tokens(const Plc_Tokens *tokens, Plc_Tokens *stack)
             double right = plc_parser_pop_token(stack).data.number;
             double left  = plc_parser_pop_token(stack).data.number;
 
-            Plc_Token t = {0};
+            Plc_Token t   = {0};
+            t.type        = PLC_TOKEN_NUMBER;
             t.data.number = left * right;
-            t.type = PLC_TOKEN_NUMBER;
             dyn_array_append(stack, t);
         } break;
 
         case PLC_TOKEN_STRING: {
+            assert(stack->count > 0);
+            Plc_Token top = stack->contents[0];
             if (plc_cmp(&token->data.string, "print")) {
-                Plc_Token *top = &stack->contents[0];
-                fprintf(stdout, "INFO: Value: %lf, Type: %s\n", top->data.number, plc_token_type_as_cstr(top->type));
+                fprintf(stdout, "INFO: Value: %.2lf, Type: %s\n", top.data.number, plc_token_type_as_cstr(top.type));
+            } else if (plc_cmp(&token->data.string, "dup")) {
+                dyn_array_append(stack, top);
             } else {
                 fprintf(stdout, "ERROR: Unknown token `%s`\n", token->data.string.contents);
                 continue;

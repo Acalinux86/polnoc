@@ -28,7 +28,7 @@ typedef struct {
 typedef union {
     Plc_String string;
     double number;
-    char character;
+    char binop;
 } Plc_TokenData;
 
 typedef struct {
